@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Network Topology Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .node {
+            transition: all 0.3s ease-in-out;
+        }
+        .link {
+            transition: all 0.3s ease-in-out;
+        }
+        .packet {
+            transition: all 0.1s linear;
+        }
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .info-panel {
+            scrollbar-width: thin;
+            scrollbar-color: #4f46e5 #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8">
+        <header class="mb-6 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Network Topology Simulator</h1>
+            <p class="text-gray-600 mt-2">Select a topology, send packets, and simulate failures to see how they work.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Visualization Area -->
+            <main class="lg:col-span-2 bg-gray-50 rounded-xl p-4 border border-gray-200 flex items-center justify-center" style="min-height: 500px;">
+                <svg id="visualization" class="w-full h-full"></svg>
+            </main>
+
+            <!-- Controls and Info Panel -->
+            <aside class="flex flex-col gap-6">
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Controls</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="topology-select" class="block text-sm font-medium text-gray-700 mb-1">Topology</label>
+                            <select id="topology-select" class="w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="bus">Bus</option>
+                                <option value="star">Star</option>
+                                <option value="ring">Ring</option>
+                                <option value="mesh">Mesh</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                           <button id="send-packet-btn" class="btn w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Send Packet</button>
+                           <button id="break-link-btn" class="btn w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Break Link</button>
+                           <button id="reset-btn" class="btn w-full bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 flex-grow">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Information</h2>
+                    <div id="info-panel" class="space-y-3 text-sm text-gray-600 h-64 overflow-y-auto pr-2 info-panel">
+                        <!-- Info text will be dynamically inserted here -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const svg = document.getElementById('visualization');
+            const topologySelect = document.getElementById('topology-select');
+            const sendPacketBtn = document.getElementById('send-packet-btn');
+            const breakLinkBtn = document.getElementById('break-link-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const infoPanel = document.getElementById('info-panel');
+
+            // State
+            let nodes = [];
+            let links = [];
+            let packets = [];
+            let currentTopology = 'bus';
+            let animationFrameId;
+
+            // --- CONFIGURATION ---
+            const NODE_RADIUS = 20;
+            const PACKET_RADIUS = 8;
+            const NODE_COLOR = '#4f46e5';
+            const NODE_BROKEN_COLOR = '#ef4444';
+            const LINK_COLOR = '#6b7280';
+            const LINK_BROKEN_COLOR = '#ef4444';
+            const PACKET_COLOR = '#10b981';
+            const PACKET_SPEED = 0.02; // Percentage of link per frame
+
+            // --- TOPOLOGY DEFINITIONS ---
+            const topologyDetails = {
+                bus: {
+                    name: "Bus Topology",
+                    description: "All devices are connected to a single central cable, called the bus or backbone. Data is sent to all devices, but only the intended recipient accepts and processes the data.",
+                    pros: "Easy to install, less cable required.",
+                    cons: "If the main cable fails, the entire network is down. Performance degrades as more devices are added."
+                },
+                star: {
+                    name: "Star Topology",
+                    description: "All devices are connected to a central hub or switch. Devices must communicate through the hub. This is the most common topology in modern LANs.",
+                    pros: "Easy to add/remove devices. Failure of one link doesn't affect the rest of the network.",
+                    cons: "If the central hub fails, the entire network fails. Requires more cable than a bus topology."
+                },
+                ring: {
+                    name: "Ring Topology",
+                    description: "Devices are connected in a circular fashion. Data travels in one direction, passing through each device until it reaches its destination.",
+                    pros: "Performs better than a bus under heavy load. Prevents network collisions.",
+                    cons: "Failure of a single link or node can bring down the entire network. Difficult to troubleshoot."
+                },
+                mesh: {
+                    name: "Mesh Topology",
+                    description: "Every device is connected to every other device (full mesh) or to several other devices (partial mesh). This provides a high level of redundancy.",
+                    pros: "Highly fault-tolerant. If one path fails, data can be rerouted.",
+                    cons: "Expensive and complex to install and manage due to the large amount of cabling and connections."
+                }
+            };
+
+            // --- LOGGING ---
+            function logInfo(message, type = 'info') {
+                const p = document.createElement('p');
+                let typeClass = 'text-gray-600';
+                if (type === 'success') typeClass = 'text-green-600 font-medium';
+                if (type === 'error') typeClass = 'text-red-600 font-medium';
+                if (type === 'title') typeClass = 'text-gray-800 font-bold text-base';
+                
+                p.className = typeClass;
+                p.innerHTML = message;
+                infoPanel.appendChild(p);
+                infoPanel.scrollTop = infoPanel.scrollHeight;
+            }
+
+            // --- DRAWING ---
+            function draw() {
+                svg.innerHTML = ''; // Clear SVG
+
+                // Draw links
+                links.forEach(link => {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', link.source.x);
+                    line.setAttribute('y1', link.source.y);
+                    line.setAttribute('x2', link.target.x);
+                    line.setAttribute('y2', link.target.y);
+                    line.setAttribute('stroke', link.broken ? LINK_BROKEN_COLOR : LINK_COLOR);
+                    line.setAttribute('stroke-width', link.isBus ? 6 : 4);
+                    if (link.broken) {
+                        line.setAttribute('stroke-dasharray', '5,5');
+                    }
+                    line.classList.add('link');
+                    svg.appendChild(line);
+                });
+
+                // Draw nodes
+                nodes.forEach(node => {
+                    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', node.x);
+                    circle.setAttribute('cy', node.y);
+                    circle.setAttribute('r', NODE_RADIUS);
+                    circle.setAttribute('fill', node.broken ? NODE_BROKEN_COLOR : NODE_COLOR);
+                    circle.classList.add('node');
+                    group.appendChild(circle);
+
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', node.x);
+                    text.setAttribute('y', node.y + 5);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('fill', 'white');
+                    text.setAttribute('font-size', '14px');
+                    text.setAttribute('font-weight', 'bold');
+                    text.textContent = node.id;
+                    group.appendChild(text);
+                    
+                    svg.appendChild(group);
+                });
+
+                // Draw packets
+                packets.forEach(packet => {
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', packet.x);
+                    circle.setAttribute('cy', packet.y);
+                    circle.setAttribute('r', PACKET_RADIUS);
+                    circle.setAttribute('fill', PACKET_COLOR);
+                    circle.classList.add('packet');
+                    svg.appendChild(circle);
+                });
+            }
+
+            // --- ANIMATION LOOP ---
+            function animate() {
+                let packetsToRemove = [];
+                packets.forEach((packet, index) => {
+                    const currentLink = packet.path[packet.pathIndex];
+                    if (!currentLink || currentLink.broken || (currentLink.source.broken && packet.pathIndex > 0) || currentLink.target.broken) {
+                        logInfo(`Packet from ${packet.sourceNode.id} to ${packet.destNode.id} failed due to a broken link or node.`, 'error');
+                        packetsToRemove.push(index);
+                        return;
+                    }
+
+                    packet.progress += PACKET_SPEED;
+                    
+                    const source = currentLink.source;
+                    const target = currentLink.target;
+
+                    packet.x = source.x + (target.x - source.x) * packet.progress;
+                    packet.y = source.y + (target.y - source.y) * packet.progress;
+
+                    if (packet.progress >= 1.0) {
+                        packet.progress = 0;
+                        packet.pathIndex++;
+                        if (packet.pathIndex >= packet.path.length) {
+                             if (currentTopology === 'bus' && packet.path[packet.path.length-1].target !== packet.destNode) {
+                                // Bus packet reached end of bus line, but not its destination.
+                                // This logic is simplified; in reality, it just gets absorbed.
+                            } else {
+                                logInfo(`Packet arrived at ${packet.destNode.id}!`, 'success');
+                            }
+                            packetsToRemove.push(index);
+                        }
+                    }
+                });
+
+                // Remove packets that have completed their journey
+                for (let i = packetsToRemove.length - 1; i >= 0; i--) {
+                    packets.splice(packetsToRemove[i], 1);
+                }
+
+                draw();
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            // --- TOPOLOGY CREATION ---
+            function createTopology(type) {
+                cancelAnimationFrame(animationFrameId);
+                nodes = [];
+                links = [];
+                packets = [];
+                const width = svg.clientWidth;
+                const height = svg.clientHeight;
+
+                infoPanel.innerHTML = '';
+                const details = topologyDetails[type];
+                logInfo(details.name, 'title');
+                logInfo(`<b>Description:</b> ${details.description}`);
+                logInfo(`<b>Pros:</b> ${details.pros}`);
+                logInfo(`<b>Cons:</b> ${details.cons}`);
+
+                switch (type) {
+                    case 'bus':
+                        const busY = height / 2;
+                        const busStart = width * 0.1;
+                        const busEnd = width * 0.9;
+                        const busNode1 = {id: 'bus_start', x: busStart, y: busY, isBusNode: true};
+                        const busNode2 = {id: 'bus_end', x: busEnd, y: busY, isBusNode: true};
+                        
+                        links.push({source: busNode1, target: busNode2, isBus: true});
+
+                        for (let i = 0; i < 5; i++) {
+                            const x = busStart + (busEnd - busStart) * (i + 1) / 6;
+                            const node = { id: `N${i+1}`, x: x, y: busY - 80 };
+                            nodes.push(node);
+                            const busConnectionPoint = {id: `bus_conn_${i}`, x: x, y: busY, isBusNode: true};
+                            links.push({source: node, target: busConnectionPoint});
+                        }
+                        break;
+
+                    case 'star':
+                        const centerX = width / 2;
+                        const centerY = height / 2;
+                        const hub = { id: 'Hub', x: centerX, y: centerY };
+                        nodes.push(hub);
+
+                        for (let i = 0; i < 5; i++) {
+                            const angle = (i / 5) * 2 * Math.PI;
+                            const x = centerX + Math.cos(angle) * (width * 0.35);
+                            const y = centerY + Math.sin(angle) * (height * 0.35);
+                            const node = { id: `N${i+1}`, x, y };
+                            nodes.push(node);
+                            links.push({ source: hub, target: node });
+                        }
+                        break;
+
+                    case 'ring':
+                        const ringCenterX = width / 2;
+                        const ringCenterY = height / 2;
+                        const ringRadius = Math.min(width, height) * 0.35;
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * 2 * Math.PI;
+                            const x = ringCenterX + Math.cos(angle) * ringRadius;
+                            const y = ringCenterY + Math.sin(angle) * ringRadius;
+                            nodes.push({ id: `N${i+1}`, x, y });
+                        }
+                        for (let i = 0; i < nodes.length; i++) {
+                            links.push({ source: nodes[i], target: nodes[(i + 1) % nodes.length] });
+                        }
+                        break;
+                    
+                    case 'mesh':
+                        const meshCenterX = width / 2;
+                        const meshCenterY = height / 2;
+                        const meshRadius = Math.min(width, height) * 0.35;
+                        for (let i = 0; i < 5; i++) {
+                            const angle = (i / 5) * 2 * Math.PI;
+                            const x = meshCenterX + Math.cos(angle) * meshRadius;
+                            const y = meshCenterY + Math.sin(angle) * meshRadius;
+                            nodes.push({ id: `N${i+1}`, x, y });
+                        }
+                        // Full mesh
+                        for (let i = 0; i < nodes.length; i++) {
+                            for (let j = i + 1; j < nodes.length; j++) {
+                                links.push({ source: nodes[i], target: nodes[j] });
+                            }
+                        }
+                        break;
+                }
+                
+                currentTopology = type;
+                animate();
+            }
+
+            // --- SIMULATION LOGIC ---
+            function handleSendPacket() {
+                if (packets.length > 0) {
+                    logInfo("Please wait for the current packet to finish.", "error");
+                    return;
+                }
+                
+                let computerNodes = nodes.filter(n => !n.id.includes('Hub'));
+                if (computerNodes.length < 2) {
+                    logInfo("Not enough nodes to send a packet.", "error");
+                    return;
+                }
+
+                let sourceNode, destNode;
+                do {
+                    sourceNode = computerNodes[Math.floor(Math.random() * computerNodes.length)];
+                    destNode = computerNodes[Math.floor(Math.random() * computerNodes.length)];
+                } while (sourceNode === destNode || sourceNode.broken || destNode.broken);
+
+                logInfo(`Sending packet from ${sourceNode.id} to ${destNode.id}...`);
+
+                const path = findPath(sourceNode, destNode);
+                if (path && path.length > 0) {
+                    packets.push({
+                        x: sourceNode.x,
+                        y: sourceNode.y,
+                        sourceNode: sourceNode,
+                        destNode: destNode,
+                        path: path,
+                        pathIndex: 0,
+                        progress: 0
+                    });
+                } else {
+                    logInfo(`No path found from ${sourceNode.id} to ${destNode.id}. Delivery failed.`, "error");
+                }
+            }
+
+            function findPath(source, dest) {
+                let path = [];
+                switch(currentTopology) {
+                    case 'bus':
+                        // Packet travels from source to bus, then along bus to destination's drop line.
+                        const sourceDrop = links.find(l => l.source === source || l.target === source);
+                        const destDrop = links.find(l => l.source === dest || l.target === dest);
+                        const busLink = links.find(l => l.isBus);
+
+                        if (!sourceDrop || !destDrop || !busLink) return null;
+
+                        // Simplified: travel to bus, then to destination drop point
+                        path.push(sourceDrop);
+                        
+                        // Create a "virtual" link on the bus from source's drop to dest's drop
+                        const virtualBusLink = {
+                            source: sourceDrop.target,
+                            target: destDrop.target,
+                            broken: busLink.broken
+                        };
+                        path.push(virtualBusLink);
+                        
+                        // Travel down the destination drop link
+                        path.push({source: destDrop.target, target: destDrop.source});
+                        break;
+
+                    case 'star':
+                        const hub = nodes.find(n => n.id === 'Hub');
+                        const sourceLink = links.find(l => (l.source === source && l.target === hub) || (l.source === hub && l.target === source));
+                        const destLink = links.find(l => (l.source === dest && l.target === hub) || (l.source === hub && l.target === dest));
+                        if (!sourceLink || !destLink) return null;
+                        path.push({source: source, target: hub, broken: sourceLink.broken || hub.broken});
+                        path.push({source: hub, target: dest, broken: destLink.broken || hub.broken});
+                        break;
+
+                    case 'ring':
+                        let currentNode = source;
+                        let safety = 0;
+                        while(currentNode !== dest && safety < nodes.length * 2) {
+                            const currentLink = links.find(l => l.source === currentNode);
+                            if (!currentLink) { path = []; break; } // Path broken
+                            path.push(currentLink);
+                            currentNode = currentLink.target;
+                            safety++;
+                        }
+                        if (safety >= nodes.length * 2) path = []; // Prevent infinite loop
+                        break;
+
+                    case 'mesh':
+                        // Simple BFS to find shortest path, avoiding broken links
+                        const queue = [[source, []]];
+                        const visited = new Set([source.id]);
+
+                        while(queue.length > 0) {
+                            const [currentNode, currentPath] = queue.shift();
+
+                            if (currentNode === dest) {
+                                return currentPath;
+                            }
+
+                            // Find neighbors connected by non-broken links
+                            const neighbors = links.filter(l => !l.broken && (l.source === currentNode || l.target === currentNode));
+                            
+                            for (const link of neighbors) {
+                                const neighborNode = link.source === currentNode ? link.target : link.source;
+                                if (!visited.has(neighborNode.id)) {
+                                    visited.add(neighborNode.id);
+                                    const newPath = [...currentPath, {source: currentNode, target: neighborNode, broken: link.broken}];
+                                    queue.push([neighborNode, newPath]);
+                                }
+                            }
+                        }
+                        return null; // No path found
+                }
+                return path;
+            }
+
+            function handleBreakLink() {
+                if (currentTopology === 'star') {
+                    // In a star, the hub is the critical failure point.
+                    const hub = nodes.find(n => n.id === 'Hub');
+                    if (hub && !hub.broken) {
+                        hub.broken = true;
+                        logInfo("The central hub has failed! The entire network is down.", "error");
+                    } else {
+                        logInfo("The hub has already failed.", "info");
+                    }
+                } else if (currentTopology === 'bus') {
+                    const bus = links.find(l => l.isBus);
+                    if (bus && !bus.broken) {
+                        bus.broken = true;
+                        logInfo("The main bus backbone has failed! The network is segmented.", "error");
+                    } else {
+                        logInfo("The bus has already failed.", "info");
+                    }
+                } else {
+                    const activeLinks = links.filter(l => !l.broken);
+                    if (activeLinks.length > 0) {
+                        const linkToBreak = activeLinks[Math.floor(Math.random() * activeLinks.length)];
+                        linkToBreak.broken = true;
+                        logInfo(`Link between ${linkToBreak.source.id} and ${linkToBreak.target.id} has been broken.`, "error");
+                    } else {
+                        logInfo("No active links left to break.", "info");
+                    }
+                }
+                draw();
+            }
+
+            // --- EVENT LISTENERS ---
+            topologySelect.addEventListener('change', (e) => createTopology(e.target.value));
+            sendPacketBtn.addEventListener('click', handleSendPacket);
+            breakLinkBtn.addEventListener('click', handleBreakLink);
+            resetBtn.addEventListener('click', () => createTopology(currentTopology));
+
+            // --- INITIALIZATION ---
+            // Use a ResizeObserver to re-render the topology on container resize
+            const resizeObserver = new ResizeObserver(() => {
+                createTopology(currentTopology);
+            });
+            resizeObserver.observe(document.querySelector('main'));
+
+            createTopology(currentTopology);
+        });
+    </script>
+</body>
+</html>
