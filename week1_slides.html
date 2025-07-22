@@ -145,9 +145,17 @@
                 <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
             </div>
             <div class="flex justify-between items-center">
-                <button id="prevBtn" onclick="navigateSlides(-1)" class="bg-slate-300 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
-                <span id="slide-counter" class="text-slate-500 text-sm font-medium"></span>
-                <button id="nextBtn" onclick="navigateSlides(1)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                <!-- Back to Week 1 Button -->
+                <a href="week1.html" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors">
+                    &larr; Back to Week 1
+                </a>
+                
+                <!-- Slide Navigation Controls -->
+                <div class="flex items-center gap-4">
+                    <button id="prevBtn" onclick="navigateSlides(-1)" class="bg-slate-300 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                    <span id="slide-counter" class="text-slate-500 text-sm font-medium w-24 text-center"></span>
+                    <button id="nextBtn" onclick="navigateSlides(1)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                </div>
             </div>
         </div>
 
