@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro to Networking Concepts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for the input validation */
+        .correct-answer {
+            border-color: #22c55e; /* green-500 */
+            box-shadow: 0 0 0 2px #bbf7d0; /* green-200 */
+        }
+        .incorrect-answer {
+            border-color: #ef4444; /* red-500 */
+            box-shadow: 0 0 0 2px #fecaca; /* red-200 */
+        }
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .active-slide {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="slideshow-container" class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden">
+        
+        <!-- Slideshow Content -->
+        <div class="p-8 md:p-12">
+            
+            <!-- Slide 1: Title -->
+            <div class="slide active-slide">
+                <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">Welcome to Networking!</h1>
+                <p class="text-lg text-slate-600 mb-8">This interactive guide will walk you through the foundational concepts of computer networks. Click "Next" to begin.</p>
+                <img src="https://placehold.co/800x400/0ea5e9/ffffff?text=Networks+Connect+Us" alt="Network graphic" class="w-full h-auto rounded-lg object-cover">
+            </div>
+
+            <!-- Slide 2: The Internet -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-sky-600 mb-4">1. The Internet 🌐</h2>
+                <p class="text-lg text-slate-600 mb-6">The Internet is a massive, worldwide network of interconnected computer networks. Think of it like a global public library system—anyone can access it.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">A key feature of the Internet is that it is a <input type="text" id="q1" data-answer="public" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-24 text-center transition-all" placeholder="...?"> network, accessible to everyone.</p>
+            </div>
+
+            <!-- Slide 3: Backbone & ISPs -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-sky-600 mb-4">2. Backbone & ISPs</h2>
+                <p class="text-lg text-slate-600 mb-6">The internet has a physical backbone of massive fiber optic cables. We connect to this backbone through an Internet Service Provider.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">Analogy: If the internet backbone is the highway system, the company that provides the local road from your house to the highway is your <input type="text" id="q2" data-answer="ISP" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-20 text-center transition-all" placeholder="...?">.</p>
+            </div>
+
+            <!-- Slide 4: DNS -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-sky-600 mb-4">3. DNS: The Internet's Phonebook</h2>
+                <p class="text-lg text-slate-600 mb-6">Computers find each other using numbers called IP addresses. Since we are bad at remembering numbers, we use names like `www.google.com`.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">The system that translates human-friendly domain names into computer-friendly IP addresses is called the Domain Name System, or <input type="text" id="q3" data-answer="DNS" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-20 text-center transition-all" placeholder="...?">.</p>
+            </div>
+
+            <!-- Slide 5: The Intranet -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-indigo-600 mb-4">4. The Intranet 🏢</h2>
+                <p class="text-lg text-slate-600 mb-6">An intranet is a network that belongs to a single organization. It's used for sharing internal information like HR policies or project files.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">Unlike the public internet, an intranet is a <input type="text" id="q4" data-answer="private" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-24 text-center transition-all" placeholder="...?"> network, secured from the outside world.</p>
+            </div>
+            
+            <!-- Slide 6: VPN -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-indigo-600 mb-4">5. Remote Access with VPNs</h2>
+                <p class="text-lg text-slate-600 mb-6">How do you access a private company intranet when you're at home? You use a special secure connection.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">A Virtual Private Network, or <input type="text" id="q5" data-answer="VPN" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-20 text-center transition-all" placeholder="...?">, creates a secure, encrypted "tunnel" through the public internet to the private intranet.</p>
+            </div>
+
+            <!-- Slide 7: The Extranet -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-emerald-600 mb-4">6. The Extranet 🤝</h2>
+                <p class="text-lg text-slate-600 mb-6">An extranet is a part of a company's intranet that is extended to trusted third parties, like partners, vendors, or major customers.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">Think of an <input type="text" id="q6" data-answer="extranet" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-28 text-center transition-all" placeholder="...?"> as giving a special, limited-access key to a business partner.</p>
+            </div>
+
+            <!-- Slide 8: Network Devices -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">7. Network Devices</h2>
+                <p class="text-lg text-slate-600 mb-8">Let's look at the hardware that makes these networks function. These devices direct the flow of data.</p>
+                <img src="https://placehold.co/800x400/334155/ffffff?text=Routers,+Switches,+Firewalls" alt="Network devices graphic" class="w-full h-auto rounded-lg object-cover">
+            </div>
+
+            <!-- Slide 9: Router -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Device: Router 🚦</h2>
+                <p class="text-lg text-slate-600 mb-6">A router's main job is to direct data packets *between different networks*. It connects your internal network to the wider internet.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">The device that acts like a traffic cop for data between your home network and the internet is a <input type="text" id="q7" data-answer="router" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-24 text-center transition-all" placeholder="...?">.</p>
+            </div>
+
+            <!-- Slide 10: Switch -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Device: Switch 📦</h2>
+                <p class="text-lg text-slate-600 mb-6">A switch connects devices *within the same local network*. It allows your computer, printer, and game console to talk to each other efficiently.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">The device that acts like a mail sorter inside an office building, sending data directly to the correct device on the local network, is a <input type="text" id="q8" data-answer="switch" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-24 text-center transition-all" placeholder="...?">.</p>
+            </div>
+
+            <!-- Slide 11: Firewall -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Device: Firewall 🛡️</h2>
+                <p class="text-lg text-slate-600 mb-6">A firewall is a security device that stands between your private network and the public internet, blocking unauthorized traffic.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">The security guard for your network that inspects and filters traffic is called a <input type="text" id="q9" data-answer="firewall" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-28 text-center transition-all" placeholder="...?">.</p>
+            </div>
+
+            <!-- Slide 12: Topologies -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-rose-600 mb-4">8. Network Topology 🗺️</h2>
+                <p class="text-lg text-slate-600 mb-6">A network topology is the physical or logical layout of a network—how the devices are arranged and connected.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">The most common modern network layout, where all devices connect to a central switch like spokes on a wheel, is called a <input type="text" id="q10" data-answer="star" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-20 text-center transition-all" placeholder="...?"> topology.</p>
+            </div>
+            
+            <!-- Slide 13: Network Media -->
+            <div class="slide">
+                <h2 class="text-3xl font-bold text-amber-600 mb-4">9. Network Media 🔌</h2>
+                <p class="text-lg text-slate-600 mb-6">Network media are the physical cables or wireless signals used to transmit data.</p>
+                <p class="text-lg text-slate-700 bg-slate-50 p-4 rounded-lg">The most common wired connection for local networks is an <input type="text" id="q11" data-answer="ethernet" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-28 text-center transition-all" placeholder="...?"> cable, while the internet's backbone uses ultra-fast <input type="text" id="q12" data-answer="fiber optic" class="mx-2 p-1 rounded-md border-2 border-slate-300 w-32 text-center transition-all" placeholder="...?"> cables.</p>
+            </div>
+
+            <!-- Slide 14: End -->
+            <div class="slide">
+                <h1 class="text-4xl md:text-5xl font-bold text-green-600 mb-4">Congratulations!</h1>
+                <p class="text-lg text-slate-600 mb-8">You've completed the introduction to networking concepts. You now have a solid foundation for understanding how data moves around the world and within your own home or office.</p>
+                <img src="https://placehold.co/800x400/16a34a/ffffff?text=You're+a+Networking+Pro!" alt="Completion graphic" class="w-full h-auto rounded-lg object-cover">
+            </div>
+
+        </div>
+
+        <!-- Progress Bar and Navigation -->
+        <div class="bg-slate-50 p-4 border-t border-slate-200">
+            <div class="w-full bg-slate-200 rounded-full h-2.5 mb-4">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between items-center">
+                <button id="prevBtn" onclick="navigateSlides(-1)" class="bg-slate-300 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                <span id="slide-counter" class="text-slate-500 text-sm font-medium"></span>
+                <button id="nextBtn" onclick="navigateSlides(1)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progress-bar');
+        const slideCounter = document.getElementById('slide-counter');
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide);
+            setupQuizListeners();
+        });
+
+        // --- Slide Navigation ---
+        function showSlide(n) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active-slide'));
+            
+            // Show the current slide
+            slides[n].classList.add('active-slide');
+
+            // Update button states
+            prevBtn.disabled = (n === 0);
+            nextBtn.disabled = (n === totalSlides - 1);
+            
+            // Check if the current slide has a quiz and lock the next button
+            checkQuizAndLockNext();
+
+            // Update progress bar and counter
+            updateProgress();
+        }
+
+        function navigateSlides(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        function updateProgress() {
+            const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            slideCounter.textContent = `Slide ${currentSlide + 1} of ${totalSlides}`;
+        }
+
+        // --- Quiz Logic ---
+        function setupQuizListeners() {
+            const inputs = document.querySelectorAll('input[data-answer]');
+            inputs.forEach(input => {
+                input.addEventListener('keyup', () => {
+                    validateInput(input);
+                    checkQuizAndLockNext();
+                });
+                input.addEventListener('paste', (e) => {
+                    // Timeout to allow paste content to appear in input
+                    setTimeout(() => {
+                        validateInput(input);
+                        checkQuizAndLockNext();
+                    }, 0);
+                });
+            });
+        }
+
+        function validateInput(inputElement) {
+            const userAnswer = inputElement.value.trim().toLowerCase();
+            const correctAnswer = inputElement.dataset.answer.toLowerCase();
+
+            if (userAnswer === '') {
+                inputElement.classList.remove('correct-answer', 'incorrect-answer');
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                inputElement.classList.add('correct-answer');
+                inputElement.classList.remove('incorrect-answer');
+            } else {
+                inputElement.classList.add('incorrect-answer');
+                inputElement.classList.remove('correct-answer');
+            }
+        }
+
+        function checkQuizAndLockNext() {
+            // If we are on the last slide, the next button should always be disabled.
+            if (currentSlide === totalSlides - 1) {
+                nextBtn.disabled = true;
+                return;
+            }
+
+            const activeSlide = slides[currentSlide];
+            const inputsInSlide = activeSlide.querySelectorAll('input[data-answer]');
+
+            // If there are no quiz inputs on this slide, the button is enabled.
+            if (inputsInSlide.length === 0) {
+                nextBtn.disabled = false;
+                return;
+            }
+
+            // Check if all inputs on the current slide are correct.
+            let allCorrect = true;
+            inputsInSlide.forEach(input => {
+                if (!input.classList.contains('correct-answer')) {
+                    allCorrect = false;
+                }
+            });
+
+            nextBtn.disabled = !allCorrect;
+        }
+
+    </script>
+</body>
+</html>
