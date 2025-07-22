@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2: Understanding LANs - CYB102</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the active device */
+        .device-icon.active {
+            outline: 2px solid #ef4444; /* red-500 */
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 md:py-12">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-red-600">Week 2: Understanding Local Area Networks (LANs)</h1>
+            <p class="text-lg md:text-xl text-gray-600 mt-2">Click on any device to learn about its role.</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex flex-col lg:flex-row gap-8 items-center">
+
+            <!-- Interactive Diagram -->
+            <div id="diagram-container" class="w-full lg:w-2/3 bg-white rounded-lg shadow-lg p-4 relative" style="height: 600px;">
+                <!-- SVG for Connection Lines -->
+                <svg id="connection-svg" class="absolute top-0 left-0 w-full h-full z-0">
+                    <!-- Lines will be drawn here by JavaScript -->
+                </svg>
+
+                <!-- Devices -->
+                <!-- Switch (Center) -->
+                <div id="switch" class="device absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" 
+                     data-title="Network Switch"
+                     data-description="The switch is the central device in this LAN. It receives data from one device and intelligently forwards it only to the specific device it's intended for. This prevents unnecessary traffic and collisions on the network.">
+                    <div class="device-icon bg-red-100 p-3 rounded-lg cursor-pointer transition-transform transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-4 10V7M5 11h14M5 15h14" /></svg>
+                    </div>
+                </div>
+
+                <!-- PC 1 (Top) -->
+                <div id="pc1" class="device absolute top-16 left-1/2 -translate-x-1/2 z-10"
+                     data-title="Computer / Workstation"
+                     data-description="This is an endpoint device, like a desktop or laptop. Users on these computers can share resources (like the printer) and access others (like the server) because they are all connected to the same local network via the switch.">
+                    <div class="device-icon bg-gray-200 p-3 rounded-lg cursor-pointer transition-transform transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                </div>
+
+                <!-- Printer (Left) -->
+                <div id="printer" class="device absolute top-1/2 left-24 -translate-y-1/2 z-10"
+                     data-title="Network Printer"
+                     data-description="This printer is shared across the LAN. Any computer on the network can send print jobs to it through the switch. This is more efficient than connecting a printer to each individual computer.">
+                     <div class="device-icon bg-gray-200 p-3 rounded-lg cursor-pointer transition-transform transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                    </div>
+                </div>
+
+                <!-- Server (Right) -->
+                 <div id="server" class="device absolute top-1/2 right-24 -translate-y-1/2 z-10"
+                      data-title="File Server"
+                      data-description="A server provides services to other devices on the network. This could be a file server for storing shared documents, a web server for an internal site, or an application server. It's a powerful, centralized resource for the LAN.">
+                    <div class="device-icon bg-gray-200 p-3 rounded-lg cursor-pointer transition-transform transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 11l7-7 7 7M5 19l7-7 7 7" /></svg>
+                    </div>
+                </div>
+
+                <!-- PC 2 (Bottom) -->
+                <div id="pc2" class="device absolute bottom-16 left-1/2 -translate-x-1/2 z-10"
+                     data-title="Computer / Workstation"
+                     data-description="This is another endpoint device on the network. It can communicate with PC 1, the server, and the printer by sending data through the switch, which directs the traffic to the correct destination.">
+                    <div class="device-icon bg-gray-200 p-3 rounded-lg cursor-pointer transition-transform transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                </div>
+                
+                <!-- Backbone to Another Room -->
+                <div id="backbone" class="device absolute bottom-16 right-16 z-10"
+                     data-title="Network Backbone"
+                     data-description="A backbone is a high-speed link that connects different parts of a network. Here, it connects our LAN to another room or network segment, allowing devices in different areas to communicate. This is how larger networks are built from smaller LANs.">
+                    <div class="device-icon bg-gray-200 p-3 rounded-lg cursor-pointer transition-transform transform hover:scale-110 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
+                        <span class="text-xs text-gray-600 font-semibold">To Another Room</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Box -->
+            <div class="w-full lg:w-1/3">
+                <div id="info-box" class="bg-white rounded-lg shadow-lg p-6 min-h-[200px]">
+                    <h2 id="info-title" class="text-2xl font-bold text-red-600 mb-2">Select a device</h2>
+                    <p id="info-description" class="text-gray-600">Click on an icon in the diagram to learn more about what it does in a Local Area Network (LAN).</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Back to Home Button -->
+        <div class="text-center mt-12">
+            <a href="index.html" class="inline-block bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors">
+                &larr; Back to All Weeks
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-gray-500">
+            <p>&copy; 2024 Networking Fundamentals. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const infoTitle = document.getElementById('info-title');
+        const infoDescription = document.getElementById('info-description');
+        const devices = document.querySelectorAll('.device');
+        const svgContainer = document.getElementById('connection-svg');
+
+        function getCenter(element) {
+            return {
+                x: element.offsetLeft + element.offsetWidth / 2,
+                y: element.offsetTop + element.offsetHeight / 2,
+            };
+        }
+
+        function drawLines() {
+            svgContainer.innerHTML = ''; // Clear existing lines
+            const switchCenter = getCenter(document.getElementById('switch'));
+            
+            devices.forEach(device => {
+                if (device.id !== 'switch') {
+                    const deviceCenter = getCenter(device);
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', switchCenter.x);
+                    line.setAttribute('y1', switchCenter.y);
+                    line.setAttribute('x2', deviceCenter.x);
+                    line.setAttribute('y2', deviceCenter.y);
+                    line.setAttribute('stroke', '#9ca3af'); // gray-400
+                    line.setAttribute('stroke-width', '2');
+                    svgContainer.appendChild(line);
+                }
+            });
+        }
+
+        function handleDeviceClick(event) {
+            const clickedDevice = event.currentTarget;
+            devices.forEach(dev => dev.querySelector('.device-icon').classList.remove('active'));
+            clickedDevice.querySelector('.device-icon').classList.add('active');
+            infoTitle.textContent = clickedDevice.dataset.title;
+            infoDescription.textContent = clickedDevice.dataset.description;
+        }
+
+        devices.forEach(device => device.addEventListener('click', handleDeviceClick));
+        
+        // Initial setup
+        window.onload = () => {
+            drawLines();
+            document.getElementById('switch').click();
+        };
+        window.onresize = drawLines; // Redraw lines if the window is resized
+    </script>
+
+</body>
+</html>
