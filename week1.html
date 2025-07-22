@@ -12,6 +12,36 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        .flashcard-container {
+            perspective: 1000px;
+        }
+        .flashcard {
+            display: none; /* Hidden by default */
+        }
+        .flashcard.active {
+            display: block; /* Show the active card */
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.is-flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased">
@@ -32,122 +62,72 @@
             </a>
         </div>
 
-        <!-- Components Grid -->
-        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            <!-- Component Card: Router -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                    </svg>
+        <!-- Flashcard Section -->
+        <main>
+            <div id="flashcard-deck" class="max-w-2xl mx-auto">
+                <!-- Flashcard: Internet -->
+                <div class="flashcard" data-term="Internet">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h10a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.757 14.757a3 3 0 014.243 0 3 3 0 014.243 0M12 10v4M4.535 14.535L5 15m14-14l.465-.465M12 21.75c-2.626 0-5-1.12-5-2.5S9.374 16.75 12 16.75s5 1.12 5 2.5-2.374 2.5-5 2.5z" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Internet</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Internet</h2><p class="text-gray-600">The global system of interconnected computer networks that uses the Internet protocol suite (TCP/IP) to communicate between networks and devices. It is a network of networks of private, public, academic, business, and government networks.</p></div></div></div>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Router</h2>
-                <p class="text-gray-600">A router is a networking device that forwards data packets between computer networks. Routers perform the traffic directing functions on the Internet. A data packet is typically forwarded from one router to another router through the networks that constitute an internetwork until it reaches its destination node.</p>
+                <!-- Flashcard: Intranet -->
+                <div class="flashcard" data-term="Intranet">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Intranet</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Intranet</h2><p class="text-gray-600">A private network contained within an enterprise that is used to securely share company information and resources among employees. It uses the same protocols as the internet but is accessible only to people within the organization.</p></div></div></div>
+                </div>
+                <!-- Flashcard: Extranet -->
+                <div class="flashcard" data-term="Extranet">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Extranet</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Extranet</h2><p class="text-gray-600">A controlled private network that allows access to partners, vendors, and suppliers. It is an intranet that is partially accessible to authorized outsiders, providing a secure way to share data and collaborate.</p></div></div></div>
+                </div>
+                <!-- Flashcard: Router -->
+                <div class="flashcard" data-term="Router">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center">
+                                <div class="p-4 bg-red-100 rounded-full mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-900">Router</h2>
+                                <p class="text-gray-500 mt-2">Click to flip</p>
+                            </div>
+                            <div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center">
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2">Router</h2>
+                                <p class="text-gray-600">A networking device that forwards data packets between computer networks. Routers perform the traffic directing functions on the Internet. A data packet is typically forwarded from one router to another through the networks that constitute an internetwork until it reaches its destination.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Flashcard: Switch -->
+                <div class="flashcard" data-term="Switch">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-4 10V7M5 11h14M5 15h14" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Switch</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Switch</h2><p class="text-gray-600">A hardware device that connects devices on a computer network by using packet switching to receive, process, and forward data to the destination device. Unlike a hub, it forwards data only to the devices that need it.</p></div></div></div>
+                </div>
+                <!-- Flashcard: Firewall -->
+                <div class="flashcard" data-term="Firewall">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Firewall</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Firewall</h2><p class="text-gray-600">A network security system that monitors and controls network traffic based on security rules. It establishes a barrier between a trusted internal network and an untrusted external network, like the Internet.</p></div></div></div>
+                </div>
+                <!-- Flashcard: Wireless Access Point -->
+                <div class="flashcard" data-term="Wireless Access Point">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M1.394 9.393a15 15 0 0121.213 0" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Wireless Access Point</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Wireless Access Point</h2><p class="text-gray-600">A networking device that allows Wi-Fi devices to connect to a wired network. A WAP connects to a router and can be used to extend the wireless coverage of an existing network.</p></div></div></div>
+                </div>
+                <!-- Flashcard: Modem -->
+                <div class="flashcard" data-term="Modem">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Modem</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Modem</h2><p class="text-gray-600">A device that converts data from a digital format into one suitable for a transmission medium like telephone lines or radio. It's the gateway that connects your home network to the Internet.</p></div></div></div>
+                </div>
+                <!-- Flashcard: Server -->
+                <div class="flashcard" data-term="Server">
+                    <div class="flashcard-container h-96 md:h-80 cursor-pointer"><div class="flashcard-inner"><div class="flashcard-front bg-white shadow-lg p-6 flex flex-col items-center justify-center text-center"><div class="p-4 bg-red-100 rounded-full mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 11l7-7 7 7M5 19l7-7 7 7" /></svg></div><h2 class="text-3xl font-bold text-gray-900">Server</h2><p class="text-gray-500 mt-2">Click to flip</p></div><div class="flashcard-back bg-white shadow-lg p-6 flex flex-col justify-center text-center"><h2 class="text-2xl font-bold text-gray-900 mb-2">Server</h2><p class="text-gray-600">A computer or system that provides resources, data, services, or programs to other computers (clients) over a network. There are many types, including web servers, mail servers, and file servers.</p></div></div></div>
+                </div>
             </div>
 
-            <!-- Component Card: Switch -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-4 10V7M5 11h14M5 15h14" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Switch</h2>
-                <p class="text-gray-600">A network switch is a hardware device that connects devices on a computer network by using packet switching to receive, process, and forward data to the destination device. Unlike a hub, a switch forwards data only to the one or multiple devices that need to receive it, rather than broadcasting the same data out of each of its ports.</p>
+            <!-- Navigation -->
+            <div class="flex justify-between items-center max-w-2xl mx-auto mt-8">
+                <button id="prev-card" class="bg-red-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">&larr; Previous</button>
+                <div id="card-counter" class="text-gray-600 font-medium"></div>
+                <button id="next-card" class="bg-red-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next &rarr;</button>
             </div>
-
-            <!-- Component Card: Firewall -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Firewall</h2>
-                <p class="text-gray-600">A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules. A firewall typically establishes a barrier between a trusted internal network and an untrusted external network, such as the Internet.</p>
-            </div>
-
-            <!-- Component Card: Access Point -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M1.394 9.393a15 15 0 0121.213 0" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Wireless Access Point</h2>
-                <p class="text-gray-600">A wireless access point (WAP) is a networking hardware device that allows other Wi-Fi devices to connect to a wired network. The WAP connects to a router as a standalone device and can be used to extend the wireless coverage of an existing network.</p>
-            </div>
-
-            <!-- Component Card: Modem -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Modem</h2>
-                <p class="text-gray-600">A modem (modulator-demodulator) is a hardware device that converts data from a digital format, intended for communication directly between devices, into one suitable for a transmission medium such as telephone lines or radio. It's the gateway that connects your home network to the Internet.</p>
-            </div>
-            
-            <!-- Component Card: Server -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 11l7-7 7 7M5 19l7-7 7 7" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Server</h2>
-                <p class="text-gray-600">A server is a computer or system that provides resources, data, services, or programs to other computers, known as clients, over a network. In theory, whenever computers share resources with client machines they are considered servers. There are many types of servers, including web servers, mail servers, and file servers.</p>
-            </div>
-            
-            <!-- Component Card: Internet -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h10a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.757 14.757a3 3 0 014.243 0 3 3 0 014.243 0M12 10v4M4.535 14.535L5 15m14-14l.465-.465M12 21.75c-2.626 0-5-1.12-5-2.5S9.374 16.75 12 16.75s5 1.12 5 2.5-2.374 2.5-5 2.5z" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Internet</h2>
-                <p class="text-gray-600">The Internet is the global system of interconnected computer networks that uses the Internet protocol suite (TCP/IP) to communicate between networks and devices. It is a network of networks that consists of private, public, academic, business, and government networks of local to global scope, linked by a broad array of electronic, wireless, and optical networking technologies.</p>
-            </div>
-            
-            <!-- Component Card: Intranet -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Intranet</h2>
-                <p class="text-gray-600">An intranet is a private network contained within an enterprise that is used to securely share company information and computing resources among employees. It can also be used to facilitate working in groups and for teleconferences. An intranet uses the same protocols as the internet, but is accessible only to people within the organization.</p>
-            </div>
-
-            <!-- Component Card: Extranet -->
-            <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:shadow-red-500/20">
-                 <!-- Icon -->
-                <div class="p-4 bg-red-100 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Extranet</h2>
-                <p class="text-gray-600">An extranet is a controlled private network that allows access to partners, vendors, and suppliers or an authorized set of customers – normally to a subset of the information accessible from an organization's intranet. It is an intranet that is partially accessible to authorized outsiders, providing a secure way to share data and collaborate.</p>
-            </div>
-
         </main>
 
         <!-- Back to Home Button -->
         <div class="text-center mt-16">
-            <a href="index.html" class="inline-block bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors">
+            <a href="index.html" class="inline-block bg-gray-700 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors">
                 &larr; Back to All Weeks
             </a>
         </div>
@@ -158,6 +138,59 @@
         </footer>
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashcards = document.querySelectorAll('.flashcard');
+            const prevBtn = document.getElementById('prev-card');
+            const nextBtn = document.getElementById('next-card');
+            const cardCounter = document.getElementById('card-counter');
+            let currentCardIndex = 0;
+
+            function showCard(index) {
+                // Unflip any flipped card before switching
+                if (flashcards[currentCardIndex]) {
+                    flashcards[currentCardIndex].classList.remove('is-flipped');
+                }
+
+                flashcards.forEach((card, i) => {
+                    card.classList.toggle('active', i === index);
+                });
+                
+                currentCardIndex = index;
+                
+                // Update counter
+                cardCounter.textContent = `Card ${index + 1} of ${flashcards.length}`;
+
+                // Update button states
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === flashcards.length - 1;
+            }
+
+            // Flip card on click
+            flashcards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('is-flipped');
+                });
+            });
+
+            // Navigation button event listeners
+            prevBtn.addEventListener('click', () => {
+                if (currentCardIndex > 0) {
+                    showCard(currentCardIndex - 1);
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentCardIndex < flashcards.length - 1) {
+                    showCard(currentCardIndex + 1);
+                }
+            });
+
+            // Initial setup
+            showCard(0);
+        });
+    </script>
 
 </body>
 </html>
